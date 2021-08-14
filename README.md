@@ -1,4 +1,4 @@
-# Fivem tgiann-carhud script
+# Compass And Location Display
 
 ![IMG](https://i.imgur.com/6MqGupW.png "IMG")
 
