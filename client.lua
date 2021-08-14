@@ -1,3 +1,7 @@
+TGIANN = {}
+
+TGIANN.positionx = 0.002 -- -0.15 left of screen, 0.0 Side of the map , 0.3 Middle of the screen,  0.6 or 0.7 Right of screen
+TGIANN.positiony = -0.03 -- 0.0 Bottom of the screen, -0.3 Middle of the screen, -0.9 Top of the screen
 
 local w, h = GetActiveScreenResolution()
 local flattire = false
@@ -21,28 +25,13 @@ local compass = {
     }
 }
 
--- SPEEDOMETER PARAMETERS
-local speedColorText = {255, 255, 255}      -- Color used to display speed label text
-local speedColorUnder = {255, 255, 255}     -- Color used to display speed when under speedLimit
-local speedColorOver = {255, 96, 96}        -- Color used to display speed when over speedLimit
-
--- FUEL PARAMETERS
-local fuelColorText = {255, 255, 255}       -- Color used to display fuel text
-local seatbeltColorOn = {160, 255, 160}     -- Color used when seatbelt is on
-local seatbeltColorOff = {255, 96, 96}      -- Color used when seatbelt is off
-
--- CRUISE CONTROL PARAMETERS
-local cruiseColorOn = {160, 255, 160}       -- Color used when seatbelt is on
-local cruiseColorOff = {255, 255, 255}      -- Color used when seatbelt is off
-local vehIsMovingFwd = 0
-
 -- LOCATION AND TIME PARAMETERS
 local locationColorText = {255, 255, 255}   -- Color used to display location and time
 local zones = { ['AIRP'] = "Los Santos International Airport", ['ALAMO'] = "Alamo Sea", ['ALTA'] = "Alta", ['ARMYB'] = "Fort Zancudo", ['BANHAMC'] = "Banham Canyon Dr", ['BANNING'] = "Banning", ['BEACH'] = "Vespucci Beach", ['BHAMCA'] = "Banham Canyon", ['BRADP'] = "Braddock Pass", ['BRADT'] = "Braddock Tunnel", ['BURTON'] = "Burton", ['CALAFB'] = "Calafia Bridge", ['CANNY'] = "Raton Canyon", ['CCREAK'] = "Cassidy Creek", ['CHAMH'] = "Chamberlain Hills", ['CHIL'] = "Vinewood Hills", ['CHU'] = "Chumash", ['CMSW'] = "Chiliad Mountain State Wilderness", ['CYPRE'] = "Cypress Flats", ['DAVIS'] = "Davis", ['DELBE'] = "Del Perro Beach", ['DELPE'] = "Del Perro", ['DELSOL'] = "La Puerta", ['DESRT'] = "Grand Senora Desert", ['DOWNT'] = "Downtown", ['DTVINE'] = "Downtown Vinewood", ['EAST_V'] = "East Vinewood", ['EBURO'] = "El Burro Heights", ['ELGORL'] = "El Gordo Lighthouse", ['ELYSIAN'] = "Elysian Island", ['GALFISH'] = "Galilee", ['GOLF'] = "GWC and Golfing Society", ['GRAPES'] = "Grapeseed", ['GREATC'] = "Great Chaparral", ['HARMO'] = "Harmony", ['HAWICK'] = "Hawick", ['HORS'] = "Vinewood Racetrack", ['HUMLAB'] = "Humane Labs and Research", ['JAIL'] = "Bolingbroke Penitentiary", ['KOREAT'] = "Little Seoul", ['LACT'] = "Land Act Reservoir", ['LAGO'] = "Lago Zancudo", ['LDAM'] = "Land Act Dam", ['LEGSQU'] = "Legion Square", ['LMESA'] = "La Mesa", ['LOSPUER'] = "La Puerta", ['MIRR'] = "Mirror Park", ['MORN'] = "Morningwood", ['MOVIE'] = "Richards Majestic", ['MTCHIL'] = "Mount Chiliad", ['MTGORDO'] = "Mount Gordo", ['MTJOSE'] = "Mount Josiah", ['MURRI'] = "Murrieta Heights", ['NCHU'] = "North Chumash", ['NOOSE'] = "N.O.O.S.E", ['OCEANA'] = "Pacific Ocean", ['PALCOV'] = "Paleto Cove", ['PALETO'] = "Paleto Bay", ['PALFOR'] = "Paleto Forest", ['PALHIGH'] = "Palomino Highlands", ['PALMPOW'] = "Palmer-Taylor Power Station", ['PBLUFF'] = "Pacific Bluffs", ['PBOX'] = "Pillbox Hill", ['PROCOB'] = "Procopio Beach", ['RANCHO'] = "Rancho", ['RGLEN'] = "Richman Glen", ['RICHM'] = "Richman", ['ROCKF'] = "Rockford Hills", ['RTRAK'] = "Redwood Lights Track", ['SANAND'] = "San Andreas", ['SANCHIA'] = "San Chianski Mountain Range", ['SANDY'] = "Sandy Shores", ['SKID'] = "Mission Row", ['SLAB'] = "Stab City", ['STAD'] = "Maze Bank Arena", ['STRAW'] = "Strawberry", ['TATAMO'] = "Tataviam Mountains", ['TERMINA'] = "Terminal", ['TEXTI'] = "Textile City", ['TONGVAH'] = "Tongva Hills", ['TONGVAV'] = "Tongva Valley", ['VCANA'] = "Vespucci Canals", ['VESP'] = "Vespucci", ['VINE'] = "Vinewood", ['WINDF'] = "Ron Alternates Wind Farm", ['WVINE'] = "West Vinewood", ['ZANCUDO'] = "Zancudo River", ['ZP_ORT'] = "Port of South Los Santos", ['ZQ_UAR'] = "Davis Quartz" }
 
 -- Globals
 local PlayerPed = nil
-local pedInVeh = false
+local pedInVeh = true
 local timeText = ""
 local locationText = ""
 local currentFuel = 0.0
@@ -53,46 +42,6 @@ local cruiseIsOn = false
 local seatbeltIsOn = false
 local zorlaMaxHizSiniri = {}
 local zorlaHizSabitle = {}
-
-RegisterCommand("cruise", function(source, args)
-    local vehicle = GetVehiclePedIsIn(PlayerPed, false)
-    if (GetPedInVehicleSeat(vehicle, -1) == PlayerPed) and tonumber(args[1]) > 0 and not zorlaHizSabitle[vehicle] then
-        if not IsVehicleTyreBurst(vehicle, 0) and not IsVehicleTyreBurst(vehicle, 1) and not IsVehicleTyreBurst(vehicle, 4) and not IsVehicleTyreBurst(vehicle, 5) then 
-            cruiseIsOn = true
-            cruiseSpeed = tonumber(args[1]) / speedToKmOrMph
-        end
-    end
-end)
-
-RegisterNetEvent("tgiann-carhud:eject-other-player-car-client")
-AddEventHandler("tgiann-carhud:eject-other-player-car-client", function(velocity)
-    local position = GetEntityCoords(PlayerPed)
-    SetEntityCoords(PlayerPed, position.x, position.y, position.z - 0.47, true, true, true)
-    SetEntityVelocity(PlayerPed, velocity.x, velocity.y, velocity.z)
-    Citizen.Wait(1)
-    SetPedToRagdoll(PlayerPed, 1000, 1000, 0, 0, 0, 0)
-    Citizen.Wait(1000)
-    if math.random(1, 3) == 1 then SetEntityHealth(PlayerPed, 0) end
-    pedInVeh = false
-    cruiseIsOn = false
-    seatbeltIsOn = false
-    EnableControlAction(0, 75)
-end)
-
-Citizen.CreateThread(function()
-    TriggerEvent('chat:addSuggestion', '/hizsabitle', 'Aracın Hızını Sabitle.', {{ name="Sabitlenecek Hız", help="Aracın Hızını Sabitlemek İçin Bir Değer Girin"}})
-    if TGIANN.useKm then speedToKmOrMph = 3.6 else speedToKmOrMph = 2.236936 end
-    if TGIANN.seatbeltPlayAlarmSound then
-        while true do
-            Citizen.Wait(1000)
-            local vehicle = GetVehiclePedIsIn(PlayerPed, false)
-            if vehIsMovingFwd and not seatbeltIsOn and GetPedInVehicleSeat(vehicle, -1) == PlayerPed and GetIsVehicleEngineRunning(vehicle) and GetVehicleClass(vehicle) ~= 13 and GetVehicleClass(vehicle) ~= 8 and GetVehicleClass(vehicle) ~= 21 and GetVehicleClass(vehicle) ~= 14 and GetVehicleClass(vehicle) ~= 16 and GetVehicleClass(vehicle) ~= 15 then
-                TriggerEvent('InteractSound_CL:PlayOnOne', 'alarm', 0.5)
-                Citizen.Wait(3000)
-            end
-        end
-    end
-end)
 
 -- Main thread
 Citizen.CreateThread(function()
@@ -155,7 +104,7 @@ Citizen.CreateThread(function()
         if IsPedInAnyVehicle(PlayerPed, false) then
             pedInVeh = true
         else
-            pedInVeh = false
+            pedInVeh = true
             cruiseIsOn = false
             seatbeltIsOn = false
         end
@@ -196,166 +145,12 @@ Citizen.CreateThread(function()
             tickDegree = tickDegree + compass.ticksBetweenCardinals
             tickPosition = tickPosition + pxDegree * compass.ticksBetweenCardinals        
         end
-           
+
         if pedInVeh then
-            drawText(locationText, 4, locationColorText, 0.36, screenPosX + 0.040, screenPosY + 0.0823, true)
-        
-            -- Display remainder of HUD when engine is on and vehicle is not a bicycle
-            local vehicleClass = GetVehicleClass(vehicle)
-            local keepDoorOpen = true
-            if pedInVeh and GetIsVehicleEngineRunning(vehicle) and vehicleClass ~= 13 then
-                local prevSpeed = currSpeed
-                currSpeed = GetEntitySpeed(vehicle)
-                local vehIsMovingFwd = GetEntitySpeedVector(vehicle, true).y > 1.0
-                local vehAcc = (prevSpeed - currSpeed) / GetFrameTime()
-
-                SetPedConfigFlag(PlayerPed, 32, true)
-                
-                if IsControlJustReleased(0, TGIANN.seatbeltInput) and vehicleClass ~= 8 then
-                    seatbeltIsOn = not seatbeltIsOn
-                    if TGIANN.seatbeltPlaySound then
-                        if seatbeltIsOn then
-                            TriggerEvent('InteractSound_CL:PlayOnOne', 'tak', 0.5)
-                            PlaySoundFrontend(-1, "Faster_Click", "RESPAWN_ONLINE_SOUNDSET", 1)
-                        else
-                            PlaySoundFrontend(-1, "Faster_Click", "RESPAWN_ONLINE_SOUNDSET", 1)
-                            TriggerEvent('InteractSound_CL:PlayOnOne', 'cikar', 0.5)
-                        end
-                    end
-                end
-
-                if not seatbeltIsOn then
-                    if vehIsMovingFwd and (prevSpeed > TGIANN.seatbeltEjectSpeed/2.237) and vehAcc > 981 then
-                        SetEntityCoords(PlayerPed, position.x, position.y, position.z - 0.47, true, true, true)
-                        SetEntityVelocity(PlayerPed, prevVelocity.x, prevVelocity.y, prevVelocity.z)
-                        Citizen.Wait(1)
-                        SetPedToRagdoll(PlayerPed, 1000, 1000, 0, 0, 0, 0)
-                    else
-                        prevVelocity = GetEntityVelocity(vehicle)
-                    end
-                end
-
-                if TGIANN.seatbeltDisableExit and seatbeltIsOn then DisableControlAction(0, 75) end
-			  
-                -- When player in driver seat, handle cruise control
-                if (GetPedInVehicleSeat(vehicle, -1) == PlayerPed) then
-                    if IsControlJustReleased(0, TGIANN.cruiseInput) then
-                        cruiseIsOn = not cruiseIsOn
-                        cruiseSpeed = currSpeed
-                    end
-
-                    local flatTireSeatbeltEjectSpeed = 10.0
-                    local maxSpeed = cruiseIsOn and cruiseSpeed or flattire and flatTireSeatbeltEjectSpeed or zorlaHizSabitle[vehicle] and zorlaMaxHizSiniri[vehicle] or GetVehicleHandlingFloat(vehicle,"CHandlingData","fInitialDriveMaxFlatVel")
-                    SetEntityMaxSpeed(vehicle, maxSpeed)
-                else
-                    cruiseIsOn = false
-                end
-
-                if GetPedInVehicleSeat(vehicle, -1) == PlayerPed and GetIsVehicleEngineRunning(vehicle) then
-                    if vehIsMovingFwd and (prevSpeed > TGIANN.crashSeatbeltEjectSpeed/speedToKmOrMph) and vehAcc > 784.8 then
-                        SetVehicleEngineHealth(vehicle, 10.0)
-
-                        local seatPlayerId = {}
-                        for i=1, GetVehicleModelNumberOfSeats(GetEntityModel(vehicle)) do
-                            if i ~= 1 then
-                                if not IsVehicleSeatFree(vehicle, i-2) then 
-                                    local otherPlayerId = GetPedInVehicleSeat(vehicle, i-2) 
-                                    local playerHandle = NetworkGetPlayerIndexFromPed(otherPlayerId)
-                                    local playerServerId = GetPlayerServerId(playerHandle)
-                                    table.insert(seatPlayerId, playerServerId)
-                                end
-                            end
-                        end
-                        
-                        if #seatPlayerId > 0 then TriggerServerEvent("tgiann-carhud:eject-other-player-car", seatPlayerId, prevVelocity) end
-
-                        SetEntityCoords(PlayerPed, position.x, position.y, position.z - 0.47, true, true, true)
-                        SetEntityVelocity(PlayerPed, prevVelocity.x, prevVelocity.y, prevVelocity.z)
-                        Citizen.Wait(1)
-                        SetPedToRagdoll(PlayerPed, 1000, 1000, 0, 0, 0, 0)
-                        Citizen.Wait(1000)
-                        if math.random(1, 3) == 1 then SetEntityHealth(PlayerPed, 0) end
-                        pedInVeh = false
-                        cruiseIsOn = false
-                        seatbeltIsOn = false
-                        EnableControlAction(0, 75)
-                    else
-                        prevVelocity = GetEntityVelocity(vehicle)
-                    end
-                end
-
-                if GetPedInVehicleSeat(vehicle, -1) == PlayerPed and GetIsVehicleEngineRunning(vehicle) then
-                    if vehIsMovingFwd and prevSpeed > TGIANN.crashFlatTire/speedToKmOrMph and vehAcc > 576 then
-                        local vehicle = GetPlayersLastVehicle()
-                        local randomTire = math.random(1,4)
-                        if randomTire == 1 then
-                            SetVehicleTyreBurst(vehicle, 0, 1, 100.0)
-                        elseif randomTire == 2 then
-                            SetVehicleTyreBurst(vehicle, 0, 1, 100.0)
-                            SetVehicleTyreBurst(vehicle, 4, 1, 100.0)
-                        elseif randomTire == 3 then
-                            SetVehicleTyreBurst(vehicle, 0, 1, 100.0)
-                            SetVehicleTyreBurst(vehicle, 1, 1, 100.0)
-                            SetVehicleTyreBurst(vehicle, 4, 1, 100.0)
-                            SetVehicleEngineHealth(vehicle, 10.0)
-                        elseif randomTire == 4 then
-                            SetVehicleTyreBurst(vehicle, 0, 1, 100.0)
-                            SetVehicleTyreBurst(vehicle, 1, 1, 100.0)
-                            SetVehicleTyreBurst(vehicle, 4, 1, 100.0)
-                            SetVehicleTyreBurst(vehicle, 5, 1, 100.0)
-                            SetVehicleEngineHealth(vehicle, 10.0)
-                        end
-                    end
-                end
-
-                if IsVehicleTyreBurst(vehicle, 0) or IsVehicleTyreBurst(vehicle, 1) or IsVehicleTyreBurst(vehicle, 4) or IsVehicleTyreBurst(vehicle, 5) then 
-                    flattire = true
-                else
-                    flattire = false
-                end
-
-                -- Speed
-                local speed = currSpeed * speedToKmOrMph
-                local speedColor = (speed >= TGIANN.speedLimit) and speedColorOver or speedColorUnder
-               
-                -- Draw fuel gauge
-                if GetPedInVehicleSeat(vehicle, -1) == PlayerPed then
-                    drawText(("%.3d"):format(math.ceil(speed)), 2, speedColor, 0.5, screenPosX+ 0.045, screenPosY + 0.048, true)
-                    local speedColorText = cruiseIsOn and cruiseColorOn or cruiseColorOff
-                    if TGIANN.useKm then
-                        drawText("KM", 2, speedColorText, 0.25, screenPosX + 0.065, screenPosY + 0.051, true)
-                    else
-                        drawText("MPH", 2, speedColorText, 0.25, screenPosX + 0.065, screenPosY + 0.051, true)
-                    end
-
-                    drawText(("%.3d"):format(math.ceil(currentFuel)), 2, {255, 255, 255}, 0.5, screenPosX, screenPosY + 0.048, true)
-                    drawText("FUEL", 2, fuelColorText, 0.25, screenPosX + 0.020, screenPosY + 0.051, true)
-
-                    -- Draw seatbelt status if not a motorcyle
-                    if vehicleClass ~= 8 and vehicleClass ~= 21 and vehicleClass ~= 14 and vehicleClass ~= 13 then
-                        local seatbeltColor = seatbeltIsOn and seatbeltColorOn or seatbeltColorOff
-                        drawText("BELT", 2, seatbeltColor, 0.3, screenPosX + 0.083, screenPosY + 0.051, true)
-                    end
-
-                else
-                    drawText(("%.3d"):format(math.ceil(speed)), 2, speedColor, 0.5, screenPosX, screenPosY + 0.048, true)
-                    local speedColorText = cruiseIsOn and cruiseColorOn or cruiseColorOff
-                    drawText("KM", 2, speedColorText, 0.25, screenPosX + 0.020, screenPosY + 0.051, true)
-
-                    -- Draw seatbelt status if not a motorcyle
-                    if vehicleClass ~= 8 and vehicleClass ~= 21 and vehicleClass ~= 14 and vehicleClass ~= 13 then
-                        local seatbeltColor = seatbeltIsOn and seatbeltColorOn or seatbeltColorOff
-                        drawText("BELT", 2, seatbeltColor, 0.3, screenPosX + 0.041, screenPosY + 0.051, true)
-                    end
-
-                end
-                drawText(timeText, 4, locationColorText, 0.3, screenPosX, screenPosY + 0.028, true)
-            end
-        else
-            drawText(timeText, 4, locationColorText, 0.3, screenPosX, screenPosY+0.055, true)
+            drawText(locationText, 4, locationColorText, 0.40, screenPosX + 0.040, screenPosY + 0.082, true)
         end
-    end
-end)
+    end   
+end)            
 
 Citizen.CreateThread(function()
     while true do
@@ -370,14 +165,14 @@ Citizen.CreateThread(function()
 
             local zoneName = zones[GetNameOfZone(position.x, position.y, position.z)]
             if zoneName ~= nil then
-                zoneNameFull = "[".. zoneName .. "]" 
+                zoneNameFull = "~y~[~w~".. zoneName .. "~y~]~w~" 
             else
                 zoneNameFull = "[Unknown]"
             end
             
             local streetName = GetStreetNameFromHashKey(GetStreetNameAtCoord(position.x, position.y, position.z))
             locationText = (streetName == "" or streetName == nil) and (locationText) or (streetName)
-            locationText = (zoneNameFull == "" or zoneNameFull == nil) and (locationText) or (locationText .. " | " .. zoneNameFull)
+            locationText = (zoneNameFull == "" or zoneNameFull == nil) and (locationText) or (locationText .. " ~y~|~w~ " .. zoneNameFull)
             if vehicle ~= 0 then currentFuel = GetVehicleFuelLevel(vehicle) end
         end
         Citizen.Wait(time)
@@ -386,40 +181,41 @@ end)
 
 -- Helper function to draw text to screen
 function drawText(text, font, colour, scale, x, y, outline, centered)
+    if not IsHudHidden() then
     if font == nil then font = 4 end
     if scale == nil then scale = 1.0 end
-	SetTextFont(font)
-	SetTextScale(0.0, scale)
-	SetTextProportional(1)
+	    SetTextFont(font)
+	    SetTextScale(0.0, scale)
+	    SetTextProportional(1)
+        SetTextOutline()
     if colour then
         SetTextColour(colour[1], colour[2], colour[3], colour[4] ~= nil and colour[4] or 255)
     else 
         SetTextColour(255, 255, 255, 255)
     end
-    SetTextDropShadow(0, 0, 0, 0, 255)
+        SetTextDropShadow(0, 0, 0, 0, 255)
 	if centered then SetTextCentre(true) end
-    --if outline then SetTextOutline() end
-    SetTextEntry("STRING")
-	AddTextComponentString(text)
-	DrawText(x + TGIANN.positionx, y + TGIANN.positiony)
+        SetTextEntry("STRING")
+	    AddTextComponentString(text)
+	    DrawText(x + TGIANN.positionx, y + TGIANN.positiony)
+    end
 end
 
 function Draw2DText(x, y, text, scale, center)
-    -- Draw text on screen
-    SetTextFont(4)
-    SetTextProportional(7)
-    SetTextScale(scale, scale)
-    SetTextColour(255, 255, 255, 255)
-    SetTextDropShadow(0, 0, 0, 0,255)
-    SetTextDropShadow()
-    SetTextEdge(4, 0, 0, 0, 255)
-    SetTextOutline()
-    if center then 
-    	SetTextJustification(0)
+    if not IsHudHidden() then
+        SetTextFont(4)
+        SetTextProportional(7)
+        SetTextScale(scale, scale)
+        SetTextOutline()
+        SetTextColour(255, 255, 255, 255)
+        SetTextDropShadow(0, 0, 0, 0,255)
+        SetTextDropShadow()
+        SetTextEdge(4, 0, 0, 0, 255)
+        SetTextOutline()
+        SetTextEntry("STRING")
+        AddTextComponentString(text)
+        DrawText(x, y)
     end
-    SetTextEntry("STRING")
-    AddTextComponentString(text)
-    DrawText(x, y)
 end
 
 function degreesToIntercardinalDirection( dgr )
