@@ -165,14 +165,14 @@ Citizen.CreateThread(function()
 
             local zoneName = zones[GetNameOfZone(position.x, position.y, position.z)]
             if zoneName ~= nil then
-                zoneNameFull = "~y~[~w~".. zoneName .. "~y~]~w~" 
+                zoneNameFull = "[".. zoneName .. "]" 
             else
                 zoneNameFull = "[Unknown]"
             end
             
             local streetName = GetStreetNameFromHashKey(GetStreetNameAtCoord(position.x, position.y, position.z))
             locationText = (streetName == "" or streetName == nil) and (locationText) or (streetName)
-            locationText = (zoneNameFull == "" or zoneNameFull == nil) and (locationText) or (locationText .. " ~y~|~w~ " .. zoneNameFull)
+            locationText = (zoneNameFull == "" or zoneNameFull == nil) and (locationText) or (locationText .. " | " .. zoneNameFull)
             if vehicle ~= 0 then currentFuel = GetVehicleFuelLevel(vehicle) end
         end
         Citizen.Wait(time)
