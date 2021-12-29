@@ -7,4 +7,4 @@
 * Compass and street name HUD (https://forum.cfx.re/t/release-compass-and-street-name-hud)
 
 **Requirements**
-* None
+* Nearest Postal: https://github.com/Andyyy7666/nearest_postal
