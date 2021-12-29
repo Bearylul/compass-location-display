@@ -1,12 +1,7 @@
-TGIANN = {}
+-- DON'T TOUCH UNLESS YOU KNOW WHAT YOU'RE DOING
 
-TGIANN.positionx = 0.002 -- -0.15 left of screen, 0.0 Side of the map , 0.3 Middle of the screen,  0.6 or 0.7 Right of screen
-TGIANN.positiony = -0.03 -- 0.0 Bottom of the screen, -0.3 Middle of the screen, -0.9 Top of the screen
-
-local w, h = GetActiveScreenResolution()
-local flattire = false
 local compass = {
-    ticksBetweenCardinals = 9.0, -- Ara Çizgiler
+    ticksBetweenCardinals = 9.0,
     tickColour = {r = 255, g = 255, b = 255, a = 255},
     tickSize = {w = 0.0006, h = 0.003},
     cardinal = {
@@ -25,25 +20,15 @@ local compass = {
     }
 }
 
--- LOCATION AND TIME PARAMETERS
-local locationColorText = {255, 255, 255}   -- Color used to display location and time
+-- LOCATION PARAMETERS (NO TOUCH)
+local locationColorText = {255, 255, 255}   -- Color used to display location
 local zones = { ['AIRP'] = "Los Santos International Airport", ['ALAMO'] = "Alamo Sea", ['ALTA'] = "Alta", ['ARMYB'] = "Fort Zancudo", ['BANHAMC'] = "Banham Canyon Dr", ['BANNING'] = "Banning", ['BEACH'] = "Vespucci Beach", ['BHAMCA'] = "Banham Canyon", ['BRADP'] = "Braddock Pass", ['BRADT'] = "Braddock Tunnel", ['BURTON'] = "Burton", ['CALAFB'] = "Calafia Bridge", ['CANNY'] = "Raton Canyon", ['CCREAK'] = "Cassidy Creek", ['CHAMH'] = "Chamberlain Hills", ['CHIL'] = "Vinewood Hills", ['CHU'] = "Chumash", ['CMSW'] = "Chiliad Mountain State Wilderness", ['CYPRE'] = "Cypress Flats", ['DAVIS'] = "Davis", ['DELBE'] = "Del Perro Beach", ['DELPE'] = "Del Perro", ['DELSOL'] = "La Puerta", ['DESRT'] = "Grand Senora Desert", ['DOWNT'] = "Downtown", ['DTVINE'] = "Downtown Vinewood", ['EAST_V'] = "East Vinewood", ['EBURO'] = "El Burro Heights", ['ELGORL'] = "El Gordo Lighthouse", ['ELYSIAN'] = "Elysian Island", ['GALFISH'] = "Galilee", ['GOLF'] = "GWC and Golfing Society", ['GRAPES'] = "Grapeseed", ['GREATC'] = "Great Chaparral", ['HARMO'] = "Harmony", ['HAWICK'] = "Hawick", ['HORS'] = "Vinewood Racetrack", ['HUMLAB'] = "Humane Labs and Research", ['JAIL'] = "Bolingbroke Penitentiary", ['KOREAT'] = "Little Seoul", ['LACT'] = "Land Act Reservoir", ['LAGO'] = "Lago Zancudo", ['LDAM'] = "Land Act Dam", ['LEGSQU'] = "Legion Square", ['LMESA'] = "La Mesa", ['LOSPUER'] = "La Puerta", ['MIRR'] = "Mirror Park", ['MORN'] = "Morningwood", ['MOVIE'] = "Richards Majestic", ['MTCHIL'] = "Mount Chiliad", ['MTGORDO'] = "Mount Gordo", ['MTJOSE'] = "Mount Josiah", ['MURRI'] = "Murrieta Heights", ['NCHU'] = "North Chumash", ['NOOSE'] = "N.O.O.S.E", ['OCEANA'] = "Pacific Ocean", ['PALCOV'] = "Paleto Cove", ['PALETO'] = "Paleto Bay", ['PALFOR'] = "Paleto Forest", ['PALHIGH'] = "Palomino Highlands", ['PALMPOW'] = "Palmer-Taylor Power Station", ['PBLUFF'] = "Pacific Bluffs", ['PBOX'] = "Pillbox Hill", ['PROCOB'] = "Procopio Beach", ['RANCHO'] = "Rancho", ['RGLEN'] = "Richman Glen", ['RICHM'] = "Richman", ['ROCKF'] = "Rockford Hills", ['RTRAK'] = "Redwood Lights Track", ['SANAND'] = "San Andreas", ['SANCHIA'] = "San Chianski Mountain Range", ['SANDY'] = "Sandy Shores", ['SKID'] = "Mission Row", ['SLAB'] = "Stab City", ['STAD'] = "Maze Bank Arena", ['STRAW'] = "Strawberry", ['TATAMO'] = "Tataviam Mountains", ['TERMINA'] = "Terminal", ['TEXTI'] = "Textile City", ['TONGVAH'] = "Tongva Hills", ['TONGVAV'] = "Tongva Valley", ['VCANA'] = "Vespucci Canals", ['VESP'] = "Vespucci", ['VINE'] = "Vinewood", ['WINDF'] = "Ron Alternates Wind Farm", ['WVINE'] = "West Vinewood", ['ZANCUDO'] = "Zancudo River", ['ZP_ORT'] = "Port of South Los Santos", ['ZQ_UAR'] = "Davis Quartz" }
 
--- Globals
+-- Globals (NO TOUCH)
 local PlayerPed = nil
-local pedInVeh = true
-local timeText = ""
 local locationText = ""
-local currentFuel = 0.0
-local currSpeed = 0.0
-local cruiseSpeed = 999.0
-local prevVelocity = {x = 0.0, y = 0.0, z = 0.0}
-local cruiseIsOn = false
-local seatbeltIsOn = false
-local zorlaMaxHizSiniri = {}
-local zorlaHizSabitle = {}
 
--- Main thread
+-- Main thread (NO TOUCH)
 Citizen.CreateThread(function()
     if w == 1920 and h == 1080 then
         screenPosX = 0.165                    -- X coordinate (top left corner of HUD)
@@ -99,17 +84,6 @@ Citizen.CreateThread(function()
         Citizen.Wait(1)
         PlayerPed = PlayerPedId()
         local position = GetEntityCoords(PlayerPed)
-        local vehicle = GetVehiclePedIsIn(PlayerPed, false)
-        -- Set vehicle states
-        if IsPedInAnyVehicle(PlayerPed, false) then
-            pedInVeh = true
-        else
-            pedInVeh = true
-            cruiseIsOn = false
-            seatbeltIsOn = false
-        end
-
-        -- Get time and display
         local pxDegree = 0.06 / 180
         local playerHeadingDegrees = 0
         local playerHeadingDegrees = 360.0 - GetEntityHeading(PlayerPed)
@@ -117,69 +91,57 @@ Citizen.CreateThread(function()
         local tickDegreeRemainder = compass.ticksBetweenCardinals - (tickDegree % compass.ticksBetweenCardinals)
         local tickPosition = screenPosX + 0.005 + tickDegreeRemainder * pxDegree
         tickDegree = tickDegree + tickDegreeRemainder
-        --[[
-        Draw2DText(.5, .3, "~r~The tickDegree is: ~b~" .. tostring(tickDegree), 1.0, 1);
-        Draw2DText(.5, .5, "~r~The tickDegree % 90.0 is: ~b~" .. tostring((tickDegree % 90)), 1.0, 1);
-        Draw2DText(.5, .7, "~r~The tickDegree % 45.0 is: ~b~" .. tostring((tickDegree % 45)), 1.0, 1);
-        ]]--
 
         while tickPosition < screenPosX + 0.0325 do
-            if (tickDegree % 90.0) == 0 then
-                -- OLD:
-                --DrawRect(tickPosition + TGIANN.positionx, screenPosY + 0.095 + TGIANN.positiony, compass.cardinal.tickSize.w, compass.cardinal.tickSize.h, compass.cardinal.tickColour.r, compass.cardinal.tickColour.g, compass.cardinal.tickColour.b, compass.cardinal.tickColour.a )
-                --drawText(degreesToIntercardinalDirection(tickDegree), 4, compass.cardinal.textColour, 0.4, tickPosition, screenPosY + 0.095 + compass.cardinal.textOffset, true, true)
+            if not IsHudHidden() then
+                if (tickDegree % 90.0) == 0 then
+                    -- OLD:
+                    --DrawRect(tickPosition + pos.positionx, screenPosY + 0.095 + pos.positiony, compass.cardinal.tickSize.w, compass.cardinal.tickSize.h, compass.cardinal.tickColour.r, compass.cardinal.tickColour.g, compass.cardinal.tickColour.b, compass.cardinal.tickColour.a )
+                    --drawText(degreesToIntercardinalDirection(tickDegree), 4, compass.cardinal.textColour, 0.4, tickPosition, screenPosY + 0.095 + compass.cardinal.textOffset, true, true)
             
-                DrawRect(tickPosition + TGIANN.positionx, screenPosY + 0.1025 + TGIANN.positiony, compass.intercardinal.tickSize.w, compass.intercardinal.tickSize.h, compass.intercardinal.tickColour.r, compass.intercardinal.tickColour.g, compass.intercardinal.tickColour.b, compass.intercardinal.tickColour.a )
-                drawText(degreesToIntercardinalDirection(tickDegree), 4, compass.cardinal.textColour, 0.26, tickPosition, screenPosY + 0.095 + compass.intercardinal.textOffset, true, true)
-            elseif (tickDegree % 45.0) == 0 then
-                -- OLD:
-                --DrawRect(tickPosition + TGIANN.positionx, screenPosY + 0.1025 + TGIANN.positiony, compass.intercardinal.tickSize.w, compass.intercardinal.tickSize.h, compass.intercardinal.tickColour.r, compass.intercardinal.tickColour.g, compass.intercardinal.tickColour.b, compass.intercardinal.tickColour.a )
-                --drawText(degreesToIntercardinalDirection(tickDegree), 4, compass.cardinal.textColour, 0.26, tickPosition, screenPosY + 0.095 + compass.intercardinal.textOffset, true, true)
+                    DrawRect(tickPosition + pos.positionx, screenPosY + 0.1025 + pos.positiony, compass.intercardinal.tickSize.w, compass.intercardinal.tickSize.h, compass.intercardinal.tickColour.r, compass.intercardinal.tickColour.g, compass.intercardinal.tickColour.b, compass.intercardinal.tickColour.a )
+                    drawText(degreesToIntercardinalDirection(tickDegree), 4, compass.cardinal.textColour, 0.26, tickPosition, screenPosY + 0.095 + compass.intercardinal.textOffset, true, true)
+                elseif (tickDegree % 45.0) == 0 then
+                    -- OLD:
+                    --DrawRect(tickPosition + pos.positionx, screenPosY + 0.1025 + pos.positiony, compass.intercardinal.tickSize.w, compass.intercardinal.tickSize.h, compass.intercardinal.tickColour.r, compass.intercardinal.tickColour.g, compass.intercardinal.tickColour.b, compass.intercardinal.tickColour.a )
+                    --drawText(degreesToIntercardinalDirection(tickDegree), 4, compass.cardinal.textColour, 0.26, tickPosition, screenPosY + 0.095 + compass.intercardinal.textOffset, true, true)
                 
-                DrawRect(tickPosition + TGIANN.positionx, screenPosY + 0.095 + TGIANN.positiony, compass.cardinal.tickSize.w, compass.cardinal.tickSize.h, compass.cardinal.tickColour.r, compass.cardinal.tickColour.g, compass.cardinal.tickColour.b, compass.cardinal.tickColour.a )
-                drawText(degreesToIntercardinalDirection(tickDegree), 4, compass.cardinal.textColour, 0.4, tickPosition, screenPosY + 0.095 + compass.cardinal.textOffset, true, true)
-            elseif  (tickDegree % 90.0) == 81.0 or (tickDegree % 90.0) == 72.0 or (tickDegree % 90.0) == 9.0 or (tickDegree % 90.0) == 18.0 then
-                DrawRect(tickPosition + TGIANN.positionx, screenPosY + 0.104 + TGIANN.positiony, compass.tickSize.w, compass.tickSize.h, compass.tickColour.r, compass.tickColour.g, compass.tickColour.b, compass.tickColour.a )
+                    DrawRect(tickPosition + pos.positionx, screenPosY + 0.095 + pos.positiony, compass.cardinal.tickSize.w, compass.cardinal.tickSize.h, compass.cardinal.tickColour.r, compass.cardinal.tickColour.g, compass.cardinal.tickColour.b, compass.cardinal.tickColour.a )
+                    drawText(degreesToIntercardinalDirection(tickDegree), 4, compass.cardinal.textColour, 0.4, tickPosition, screenPosY + 0.095 + compass.cardinal.textOffset, true, true)
+                elseif  (tickDegree % 90.0) == 81.0 or (tickDegree % 90.0) == 72.0 or (tickDegree % 90.0) == 9.0 or (tickDegree % 90.0) == 18.0 then
+                    DrawRect(tickPosition + pos.positionx, screenPosY + 0.104 + pos.positiony, compass.tickSize.w, compass.tickSize.h, compass.tickColour.r, compass.tickColour.g, compass.tickColour.b, compass.tickColour.a )
+                end
             end
-
             tickDegree = tickDegree + compass.ticksBetweenCardinals
             tickPosition = tickPosition + pxDegree * compass.ticksBetweenCardinals        
         end
 
-        if pedInVeh then
-            drawText(locationText, 4, locationColorText, 0.40, screenPosX + 0.040, screenPosY + 0.082, true)
-        end
+        drawText(locationText, 4, locationColorText, 0.40, screenPosX + 0.040, screenPosY + 0.082, true)
     end   
 end)            
 
+-- (NO TOUCH)
+
 Citizen.CreateThread(function()
     while true do
-        local time = 2000
-        local hour = GetClockHours()
-        local minute = GetClockMinutes()
-        timeText = hour .. ":" .. minute
-        if pedInVeh then
-            time = 1000
-            local position = GetEntityCoords(PlayerPed)
-            local vehicle = GetVehiclePedIsIn(PlayerPed, false)
+        local position = GetEntityCoords(PlayerPed)
+        local postal = exports.nearest_postal:getPostal()
 
-            local zoneName = zones[GetNameOfZone(position.x, position.y, position.z)]
-            if zoneName ~= nil then
-                zoneNameFull = "[".. zoneName .. "]" 
-            else
-                zoneNameFull = "[Unknown]"
-            end
-            
-            local streetName = GetStreetNameFromHashKey(GetStreetNameAtCoord(position.x, position.y, position.z))
-            locationText = (streetName == "" or streetName == nil) and (locationText) or (streetName)
-            locationText = (zoneNameFull == "" or zoneNameFull == nil) and (locationText) or (locationText .. " | " .. zoneNameFull)
-            if vehicle ~= 0 then currentFuel = GetVehicleFuelLevel(vehicle) end
+        local zoneName = zones[GetNameOfZone(position.x, position.y, position.z)]
+        if zoneName ~= nil then
+            zoneNameFull = "~" .. color .. "~[~w~".. zoneName .. "~" .. color .. "~]~w~" 
+        else
+            zoneNameFull = "[Unknown]"
         end
-        Citizen.Wait(time)
+            
+        local streetName = GetStreetNameFromHashKey(GetStreetNameAtCoord(position.x, position.y, position.z))
+        locationText = (streetName == "" or streetName == nil) and (locationText) or (streetName)
+        locationText = (zoneNameFull == "" or zoneNameFull == nil) and (locationText) or ("~" .. color .. "~" .. postal .. " ~w~" .. locationText .. " ~" .. color .. "~|~w~ " .. zoneNameFull)
+        Citizen.Wait(1000)
     end
 end)
 
--- Helper function to draw text to screen
+-- Helper function to draw text to screen (NO TOUCH)
 function drawText(text, font, colour, scale, x, y, outline, centered)
     if not IsHudHidden() then
     if font == nil then font = 4 end
@@ -197,26 +159,11 @@ function drawText(text, font, colour, scale, x, y, outline, centered)
 	if centered then SetTextCentre(true) end
         SetTextEntry("STRING")
 	    AddTextComponentString(text)
-	    DrawText(x + TGIANN.positionx, y + TGIANN.positiony)
+	    DrawText(x + pos.positionx, y + pos.positiony)
     end
 end
 
-function Draw2DText(x, y, text, scale, center)
-    if not IsHudHidden() then
-        SetTextFont(4)
-        SetTextProportional(7)
-        SetTextScale(scale, scale)
-        SetTextOutline()
-        SetTextColour(255, 255, 255, 255)
-        SetTextDropShadow(0, 0, 0, 0,255)
-        SetTextDropShadow()
-        SetTextEdge(4, 0, 0, 0, 255)
-        SetTextOutline()
-        SetTextEntry("STRING")
-        AddTextComponentString(text)
-        DrawText(x, y)
-    end
-end
+-- (NO TOUCH)
 
 function degreesToIntercardinalDirection( dgr )
 	dgr = dgr % 360.0
