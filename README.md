@@ -1,6 +1,6 @@
 # Compass And Location Display
 
-![IMG](https://i.imgur.com/6MqGupW.png "IMG")
+![IMG](https://i.imgur.com/KcOcx0j.png "IMG")
 
 **Credit**
 * SimpleCarHUD (https://github.com/bepo13/FiveM-SimpleCarHUD)
