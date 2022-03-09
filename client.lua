@@ -125,7 +125,7 @@ end)
 Citizen.CreateThread(function()
     while true do
         local position = GetEntityCoords(PlayerPed)
-        local postal = exports.nearest_postal:getPostal()
+        local postal = exports.nearest-postal:getPostal()
 
         local zoneName = zones[GetNameOfZone(position.x, position.y, position.z)]
         if zoneName ~= nil then
