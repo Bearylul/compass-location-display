@@ -99,7 +99,7 @@ Citizen.CreateThread(function()
                     --DrawRect(tickPosition + pos.positionx, screenPosY + 0.095 + pos.positiony, compass.cardinal.tickSize.w, compass.cardinal.tickSize.h, compass.cardinal.tickColour.r, compass.cardinal.tickColour.g, compass.cardinal.tickColour.b, compass.cardinal.tickColour.a )
                     --drawText(degreesToIntercardinalDirection(tickDegree), 4, compass.cardinal.textColour, 0.4, tickPosition, screenPosY + 0.095 + compass.cardinal.textOffset, true, true)
             
-                    DrawRect(tickPosition + position.x, screenPosY + 0.1025 + pos.positiony, compass.intercardinal.tickSize.w, compass.intercardinal.tickSize.h, compass.intercardinal.tickColour.r, compass.intercardinal.tickColour.g, compass.intercardinal.tickColour.b, compass.intercardinal.tickColour.a )
+                    DrawRect(tickPosition + position.x, screenPosY + 0.1025 + pos.y, compass.intercardinal.tickSize.w, compass.intercardinal.tickSize.h, compass.intercardinal.tickColour.r, compass.intercardinal.tickColour.g, compass.intercardinal.tickColour.b, compass.intercardinal.tickColour.a )
                     drawText(degreesToIntercardinalDirection(tickDegree), 4, compass.cardinal.textColour, 0.26, tickPosition, screenPosY + 0.095 + compass.intercardinal.textOffset, true, true)
                 elseif (tickDegree % 45.0) == 0 then
                     -- OLD:
@@ -159,7 +159,7 @@ function drawText(text, font, colour, scale, x, y, outline, centered)
 	if centered then SetTextCentre(true) end
         SetTextEntry("STRING")
 	    AddTextComponentString(text)
-	    DrawText(x + pos.positionx, y + pos.positiony)
+	    DrawText(x + pos.x, y + pos.y)
     end
 end
 
