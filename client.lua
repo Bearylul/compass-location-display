@@ -99,17 +99,17 @@ Citizen.CreateThread(function()
                     --DrawRect(tickPosition + pos.positionx, screenPosY + 0.095 + pos.positiony, compass.cardinal.tickSize.w, compass.cardinal.tickSize.h, compass.cardinal.tickColour.r, compass.cardinal.tickColour.g, compass.cardinal.tickColour.b, compass.cardinal.tickColour.a )
                     --drawText(degreesToIntercardinalDirection(tickDegree), 4, compass.cardinal.textColour, 0.4, tickPosition, screenPosY + 0.095 + compass.cardinal.textOffset, true, true)
             
-                    DrawRect(tickPosition + pos.positionx, screenPosY + 0.1025 + pos.positiony, compass.intercardinal.tickSize.w, compass.intercardinal.tickSize.h, compass.intercardinal.tickColour.r, compass.intercardinal.tickColour.g, compass.intercardinal.tickColour.b, compass.intercardinal.tickColour.a )
+                    DrawRect(tickPosition + position.x, screenPosY + 0.1025 + pos.positiony, compass.intercardinal.tickSize.w, compass.intercardinal.tickSize.h, compass.intercardinal.tickColour.r, compass.intercardinal.tickColour.g, compass.intercardinal.tickColour.b, compass.intercardinal.tickColour.a )
                     drawText(degreesToIntercardinalDirection(tickDegree), 4, compass.cardinal.textColour, 0.26, tickPosition, screenPosY + 0.095 + compass.intercardinal.textOffset, true, true)
                 elseif (tickDegree % 45.0) == 0 then
                     -- OLD:
                     --DrawRect(tickPosition + pos.positionx, screenPosY + 0.1025 + pos.positiony, compass.intercardinal.tickSize.w, compass.intercardinal.tickSize.h, compass.intercardinal.tickColour.r, compass.intercardinal.tickColour.g, compass.intercardinal.tickColour.b, compass.intercardinal.tickColour.a )
                     --drawText(degreesToIntercardinalDirection(tickDegree), 4, compass.cardinal.textColour, 0.26, tickPosition, screenPosY + 0.095 + compass.intercardinal.textOffset, true, true)
                 
-                    DrawRect(tickPosition + pos.positionx, screenPosY + 0.095 + pos.positiony, compass.cardinal.tickSize.w, compass.cardinal.tickSize.h, compass.cardinal.tickColour.r, compass.cardinal.tickColour.g, compass.cardinal.tickColour.b, compass.cardinal.tickColour.a )
+                    DrawRect(tickPosition + position.x, screenPosY + 0.095 + position.y, compass.cardinal.tickSize.w, compass.cardinal.tickSize.h, compass.cardinal.tickColour.r, compass.cardinal.tickColour.g, compass.cardinal.tickColour.b, compass.cardinal.tickColour.a )
                     drawText(degreesToIntercardinalDirection(tickDegree), 4, compass.cardinal.textColour, 0.4, tickPosition, screenPosY + 0.095 + compass.cardinal.textOffset, true, true)
                 elseif  (tickDegree % 90.0) == 81.0 or (tickDegree % 90.0) == 72.0 or (tickDegree % 90.0) == 9.0 or (tickDegree % 90.0) == 18.0 then
-                    DrawRect(tickPosition + pos.positionx, screenPosY + 0.104 + pos.positiony, compass.tickSize.w, compass.tickSize.h, compass.tickColour.r, compass.tickColour.g, compass.tickColour.b, compass.tickColour.a )
+                    DrawRect(tickPosition + position.x, screenPosY + 0.104 + position.y, compass.tickSize.w, compass.tickSize.h, compass.tickColour.r, compass.tickColour.g, compass.tickColour.b, compass.tickColour.a )
                 end
             end
             tickDegree = tickDegree + compass.ticksBetweenCardinals
@@ -125,7 +125,7 @@ end)
 Citizen.CreateThread(function()
     while true do
         local position = GetEntityCoords(PlayerPed)
-        local postal = exports.nearest-postal:getPostal()
+        local postal = exports[Config.nearestPostal]:getPostal()
 
         local zoneName = zones[GetNameOfZone(position.x, position.y, position.z)]
         if zoneName ~= nil then
